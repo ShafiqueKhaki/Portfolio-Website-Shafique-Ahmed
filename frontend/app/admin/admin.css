@@ -1,0 +1,8 @@
+/* Admin panel scoped styles — no Tailwind needed here, just small overrides */
+.admin-table th {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}

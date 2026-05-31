@@ -1,0 +1,99 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: #faf8f4;
+    --bg-subtle: #f2ede3;
+    --surface: #ffffff;
+    --border: #e0d8c8;
+    --text: #1a1a16;
+    --text-muted: #55554b;
+    --accent: #d4a853;
+    --accent-hover: #a07830;
+  }
+
+  .dark {
+    --bg: #0f0f0c;
+    --bg-subtle: #1a1a16;
+    --surface: #1f1f1a;
+    --border: #2e2e28;
+    --text: #f2ede3;
+    --text-muted: #8f8f83;
+    --accent: #d4a853;
+    --accent-hover: #f0c87a;
+  }
+
+  /* * {
+    @apply border-border;
+  } */
+
+  html {
+    scroll-behavior: smooth;
+    font-family: "DM Sans", system-ui, sans-serif;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    @apply antialiased;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: #0f0f0c;
+  }
+
+  /* Focus ring */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+@layer utilities {
+  .font-display { font-family: "Fraunces", Georgia, serif; }
+  .font-mono { font-family: "JetBrains Mono", monospace; }
+
+  .text-accent { color: var(--accent); }
+  .bg-surface { background-color: var(--surface); }
+  .border-subtle { border-color: var(--border); }
+
+  /* Animated underline */
+  .link-underline {
+    @apply relative;
+    text-decoration: none;
+  }
+  .link-underline::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: -2px;
+    width: 0; height: 1px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+  .link-underline:hover::after { width: 100%; }
+
+  /* Fade-up animation for scroll reveals */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Print styles for /about résumé */
+@media print {
+  nav, footer, .no-print { display: none !important; }
+  body { background: white; color: black; font-size: 12pt; }
+  a { color: inherit; text-decoration: none; }
+  .print-break { page-break-before: always; }
+}
