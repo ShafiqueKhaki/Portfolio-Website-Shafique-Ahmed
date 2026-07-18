@@ -4,8 +4,13 @@ from typing import Generator
 from config import settings
 
 
+# Fix Railway's DATABASE_URL which uses postgresql:// instead of postgresql+psycopg://
+db_url = settings.DATABASE_URL
+if db_url.startswith("postgresql://") and "+psycopg" not in db_url:
+    db_url = db_url.replace("postgresql://", "postgresql+psycopg://", 1)
+
 engine = create_engine(
-    settings.DATABASE_URL,
+    db_url,
     pool_pre_ping=True,
     pool_size=10,
     max_overflow=20,
