@@ -1,12 +1,20 @@
-const BASE = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const BASE = process.env.NEXT_PUBLIC_SITE_URL || "https://shafique-ahmed.vercel.app";
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 async function fetchSlugs(path) {
   try {
-    const res = await fetch(`${API}${path}`, { next: { revalidate: 3600 } });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    const res = await fetch(`${API}${path}`, {
+      signal: controller.signal,
+      next: { revalidate: 3600 }
+    });
+    clearTimeout(timeout);
     if (!res.ok) return [];
     return await res.json();
-  } catch { return []; }
+  } catch {
+    return []; // silently return empty on timeout or error
+  }
 }
 
 export default async function sitemap() {
@@ -21,7 +29,11 @@ export default async function sitemap() {
     { url: `${BASE}/contact`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.6 },
   ];
 
-  const projects = await fetchSlugs("/api/projects");
+  const [projects, posts] = await Promise.all([
+    fetchSlugs("/api/projects"),
+    fetchSlugs("/api/blog"),
+  ]);
+
   const projectRoutes = projects.map((p) => ({
     url: `${BASE}/projects/${p.slug}`,
     lastModified: new Date(p.created_at),
@@ -29,7 +41,6 @@ export default async function sitemap() {
     priority: 0.6,
   }));
 
-  const posts = await fetchSlugs("/api/blog");
   const postRoutes = posts.map((p) => ({
     url: `${BASE}/blog/${p.slug}`,
     lastModified: new Date(p.published_at || p.created_at),
