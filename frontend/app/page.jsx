@@ -10,6 +10,8 @@ import RevealOnScroll from "@/components/ui/RevealOnScroll";
 import SkillBar from "@/components/ui/SkillBar";
 import { groupBy } from "@/lib/utils";
 
+export const dynamic = 'force-dynamic';
+
 // ─── Typed text hook ─────────────────────────────────────────────
 const ROLES = [
   "Software Engineer",
