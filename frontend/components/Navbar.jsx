@@ -43,10 +43,12 @@ export default function Navbar() {
       )}
     >
       <nav className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="font-display text-xl font-semibold tracking-tight hover:text-[var(--accent)] transition-colors">
-          SA<span className="text-[var(--accent)]">.</span>
-        </Link>
+      {/* Logo */}
+      <Link href="/" className="font-mono text-xl font-semibold tracking-tight transition-colors">
+      <span className="text-[var(--text-muted)]">{"{"}</span>
+      <span className="text-[var(--accent)]">SA</span>
+      <span className="text-[var(--text-muted)]">{"}"}</span>
+      </Link>
 
         {/* Desktop links */}
         <ul className="hidden md:flex items-center gap-8">

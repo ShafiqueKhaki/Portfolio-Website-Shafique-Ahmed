@@ -28,8 +28,10 @@ export default function Footer() {
     <footer className="border-t border-[var(--border)] mt-24">
       <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-6">
         <div>
-          <p className="font-display text-lg font-semibold">
-            {profile?.full_name || "Shafique Ahmed"}<span className="text-[var(--accent)]">.</span>
+          <p className="font-mono text-lg font-semibold">
+            <span className="text-[var(--text-muted)]">{`{`}</span>
+            <span className="text-[var(--accent)]">SA</span>
+            <span className="text-[var(--text-muted)]">{`}`}</span>
           </p>
           <p className="text-sm text-[var(--text-muted)] mt-1">
             {profile?.headline || "CS Student & Aspiring Software Engineer"} · {profile?.location || "Sukkur, Pakistan"}
@@ -51,8 +53,10 @@ export default function Footer() {
           ))}
         </div>
 
-        <p className="text-xs text-[var(--text-muted)]">
-          © {year} {profile?.full_name || "Shafique Ahmed"}. All rights reserved.
+        <p className="font-mono text-lg font-semibold">
+        <span className="text-[var(--text-muted)]">{`{`}</span>
+        <span className="text-[var(--accent)]">SA</span>
+        <span className="text-[var(--text-muted)]">{`}`}</span>
         </p>
       </div>
     </footer>
