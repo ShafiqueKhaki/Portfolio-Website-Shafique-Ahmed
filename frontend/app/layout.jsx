@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
-  title: { default: "Shafique Ahmed — CS Student & Aspiring Software Engineer", template: "%s | Shafique Ahmed" },
+  title: { default: "{SA} Shafique Ahmed — CS Student & Aspiring Software Engineer", template: "%s | {SA} Shafique Ahmed" },
   description: "Portfolio of Shafique Ahmed — 7th semester CS student, full-stack developer, and aspiring software engineer based in Sukkur, Pakistan.",
   openGraph: {
     type: "website",

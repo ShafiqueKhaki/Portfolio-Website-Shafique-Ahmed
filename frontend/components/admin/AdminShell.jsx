@@ -40,8 +40,11 @@ export default function AdminShell({ children }) {
       )}>
         {/* Logo */}
         <div className="h-16 flex items-center px-5 border-b border-[var(--border)]">
-          <Link href="/admin/dashboard" className="font-display text-lg font-semibold">
-            SA <span className="text-xs text-[var(--text-muted)] font-sans font-normal ml-1">Admin</span>
+          <Link href="/admin/dashboard" className="font-mono text-lg font-semibold tracking-tight">
+            <span className="text-[var(--text-muted)]">{"{"}</span>
+            <span className="text-[var(--accent)]">SA</span>
+            <span className="text-[var(--text-muted)]">{"}"}</span>
+            <span className="text-xs text-[var(--text-muted)] font-sans font-normal ml-2">Admin</span>
           </Link>
         </div>
 
@@ -100,7 +103,11 @@ export default function AdminShell({ children }) {
           <button onClick={() => setSidebarOpen(true)} className="p-2 text-[var(--text-muted)]">
             <Menu size={20} />
           </button>
-          <span className="font-display font-semibold ml-3">Admin</span>
+          <span className="font-mono font-semibold ml-3">
+            <span className="text-[var(--text-muted)]">{"{"}</span>
+            <span className="text-[var(--accent)]">SA</span>
+            <span className="text-[var(--text-muted)]">{"}"}</span>
+          </span>
         </div>
 
         <div className="flex-1 p-6 md:p-8">
