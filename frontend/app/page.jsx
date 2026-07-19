@@ -114,6 +114,7 @@ export default function HomePage() {
               {[
                 { href: profile?.github || "#", icon: Github },
                 { href: profile?.linkedin || "#", icon: Linkedin },
+                { href: `mailto:${profile?.email || "#"}`, icon: Mail },
               ].map(({ href, icon: Icon }, i) => (
                 <a key={i} href={href} target="_blank" rel="noopener noreferrer"
                   className="text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">
