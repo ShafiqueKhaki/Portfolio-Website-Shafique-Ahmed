@@ -17,7 +17,6 @@ const FIELDS = [
   { name: "phone", label: "Phone", type: "tel" },
   { name: "github", label: "GitHub URL", type: "url" },
   { name: "linkedin", label: "LinkedIn URL", type: "url" },
-  { name: "twitter", label: "X / Twitter URL", type: "url" },
   { name: "website", label: "Website URL", type: "url" },
 ];
 

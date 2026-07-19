@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Download, MapPin, Mail, Github, Linkedin, Twitter } from "lucide-react";
+import { Download, MapPin, Mail, Github, Linkedin } from "lucide-react";
 import { publicApi } from "@/lib/api";
 import { formatDateRange } from "@/lib/utils";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
@@ -56,7 +56,6 @@ export default function AboutPage() {
             {profile?.email && <p className="flex items-center gap-2"><Mail size={14} className="text-[var(--accent)]" /> {profile.email}</p>}
             {profile?.github && <a href={profile.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[var(--accent)] transition-colors"><Github size={14} /> GitHub</a>}
             {profile?.linkedin && <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[var(--accent)] transition-colors"><Linkedin size={14} /> LinkedIn</a>}
-            {profile?.twitter && <a href={profile.twitter} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[var(--accent)] transition-colors"><Twitter size={14} /> X / Twitter</a>}
           </div>
 
           {profile?.resume_url && (
@@ -65,10 +64,6 @@ export default function AboutPage() {
               <Download size={14} /> Download Résumé
             </a>
           )}
-          <button onClick={() => window.print()}
-            className="no-print flex items-center gap-2 px-5 py-2.5 border border-[var(--border)] rounded-full text-sm text-[var(--text-muted)] hover:border-[var(--text-muted)] transition-colors">
-            🖨️ Print Résumé
-          </button>
         </div>
 
         <div className="prose prose-neutral dark:prose-invert max-w-none">

@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, MapPin, Download, Github, Linkedin, Twitter, Mail } from "lucide-react";
+import { ArrowRight, MapPin, Download, Github, Linkedin, Mail } from "lucide-react";
 import { publicApi } from "@/lib/api";
 import ProjectCard from "@/components/ui/ProjectCard";
 import BlogCard from "@/components/ui/BlogCard";
@@ -114,8 +114,6 @@ export default function HomePage() {
               {[
                 { href: profile?.github || "#", icon: Github },
                 { href: profile?.linkedin || "#", icon: Linkedin },
-                { href: profile?.twitter || "#", icon: Twitter },
-                { href: `mailto:${profile?.email || "#"}`, icon: Mail },
               ].map(({ href, icon: Icon }, i) => (
                 <a key={i} href={href} target="_blank" rel="noopener noreferrer"
                   className="text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">

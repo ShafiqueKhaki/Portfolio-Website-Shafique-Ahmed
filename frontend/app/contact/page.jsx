@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import toast from "react-hot-toast";
-import { Mail, Github, Linkedin, Twitter, Send, MapPin } from "lucide-react";
+import { Mail, Github, Linkedin, Send, MapPin } from "lucide-react";
 import { publicApi } from "@/lib/api";
 import PageHeader from "@/components/ui/PageHeader";
 import { InlineSpinner } from "@/components/ui/LoadingSpinner";
@@ -115,7 +115,6 @@ export default function ContactPage() {
               {[
                 { href: profile?.github, icon: Github, label: "GitHub" },
                 { href: profile?.linkedin, icon: Linkedin, label: "LinkedIn" },
-                { href: profile?.twitter, icon: Twitter, label: "X / Twitter" },
               ].filter(s => s.href).map(({ href, icon: Icon, label }) => (
                 <a key={label} href={href} target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-3 text-sm text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">

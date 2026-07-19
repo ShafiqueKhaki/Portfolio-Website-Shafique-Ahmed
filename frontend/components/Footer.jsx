@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Github, Linkedin, Twitter, Mail } from "lucide-react";
+import { Github, Linkedin, Mail } from "lucide-react";
 import { useEffect, useState } from "react";
 import { publicApi } from "@/lib/api";
 import Logo from "@/components/Logo";
@@ -21,7 +21,6 @@ export default function Footer() {
   const socials = [
     { href: profile?.github, icon: Github, label: "GitHub" },
     { href: profile?.linkedin, icon: Linkedin, label: "LinkedIn" },
-    { href: profile?.twitter, icon: Twitter, label: "X / Twitter" },
     { href: profile?.email ? `mailto:${profile.email}` : null, icon: Mail, label: "Email" },
   ].filter(s => s.href);
 
