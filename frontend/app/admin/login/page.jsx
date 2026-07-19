@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
 import AdminGuard from "@/components/admin/AdminGuard";
 import { InlineSpinner } from "@/components/ui/LoadingSpinner";
+import Image from "next/image";
 
 const schema = z.object({
   email: z.string().email("Invalid email"),
@@ -45,11 +46,13 @@ function LoginForm() {
     <div className="min-h-screen flex items-center justify-center px-6 bg-[var(--bg)]">
       <div className="w-full max-w-sm">
         <div className="text-center mb-10">
-          <h1 className="font-mono text-3xl font-semibold mb-2">
-            <span className="text-[var(--text-muted)]">{"{"}</span>
-            <span className="text-[var(--accent)]">SA</span>
-            <span className="text-[var(--text-muted)]">{"}"}</span>
-          </h1>
+          <Image
+            src="https://res.cloudinary.com/mhk-cloud/image/upload/v1784489938/Portfolio_website_logo_e1ooep.png"
+            alt="Logo"
+            width={80}
+            height={80}
+            className="rounded-xl mx-auto mb-2"
+          />
           <p className="text-sm text-[var(--text-muted)]">Admin Portal</p>
         </div>
 

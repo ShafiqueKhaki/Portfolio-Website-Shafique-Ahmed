@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Sun, Moon, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Logo from "@/components/Logo";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
@@ -44,11 +45,7 @@ export default function Navbar() {
     >
       <nav className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
       {/* Logo */}
-      <Link href="/" className="font-mono text-xl font-semibold tracking-tight transition-colors">
-      <span className="text-[var(--text-muted)]">{"{"}</span>
-      <span className="text-[var(--accent)]">SA</span>
-      <span className="text-[var(--text-muted)]">{"}"}</span>
-      </Link>
+      <Logo size={36} />
 
         {/* Desktop links */}
         <ul className="hidden md:flex items-center gap-8">

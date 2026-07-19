@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { Github, Linkedin, Twitter, Mail } from "lucide-react";
 import { useEffect, useState } from "react";
 import { publicApi } from "@/lib/api";
+import Logo from "@/components/Logo";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -28,11 +29,7 @@ export default function Footer() {
     <footer className="border-t border-[var(--border)] mt-24">
       <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-6">
         <div>
-          <p className="font-mono text-lg font-semibold">
-            <span className="text-[var(--text-muted)]">{`{`}</span>
-            <span className="text-[var(--accent)]">SA</span>
-            <span className="text-[var(--text-muted)]">{`}`}</span>
-          </p>
+          <Logo size={40} linkTo="/" />
           <p className="text-sm text-[var(--text-muted)] mt-1">
             {profile?.headline || "CS Student & Aspiring Software Engineer"} · {profile?.location || "Sukkur, Pakistan"}
           </p>
@@ -53,11 +50,7 @@ export default function Footer() {
           ))}
         </div>
 
-        <p className="font-mono text-lg font-semibold">
-        <span className="text-[var(--text-muted)]">{`{`}</span>
-        <span className="text-[var(--accent)]">SA</span>
-        <span className="text-[var(--text-muted)]">{`}`}</span>
-        </p>
+        <Logo size={40} linkTo="/" />
       </div>
     </footer>
   );

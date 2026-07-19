@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import {
   LayoutDashboard, User, FolderOpen, Zap, Briefcase, GraduationCap,
   Award, Trophy, FileText, Tag, MessageSquare, BarChart2,
@@ -40,11 +41,15 @@ export default function AdminShell({ children }) {
       )}>
         {/* Logo */}
         <div className="h-16 flex items-center px-5 border-b border-[var(--border)]">
-          <Link href="/admin/dashboard" className="font-mono text-lg font-semibold tracking-tight">
-            <span className="text-[var(--text-muted)]">{"{"}</span>
-            <span className="text-[var(--accent)]">SA</span>
-            <span className="text-[var(--text-muted)]">{"}"}</span>
-            <span className="text-xs text-[var(--text-muted)] font-sans font-normal ml-2">Admin</span>
+          <Link href="/admin/dashboard" className="flex items-center gap-3">
+            <Image
+              src="https://res.cloudinary.com/mhk-cloud/image/upload/v1784489938/Portfolio_website_logo_e1ooep.png"
+              alt="Logo"
+              width={32}
+              height={32}
+              className="rounded-lg"
+            />
+            <span className="text-sm text-[var(--text-muted)] font-sans">Admin</span>
           </Link>
         </div>
 
