@@ -28,7 +28,7 @@ function AchievementsContent() {
 
   const { register, handleSubmit, reset } = useForm({ defaultValues: EMPTY });
 
-  const fetchData = () => { setLoading(true); adminApi.getAchievements().then(setItems).finally(() => setLoading(false)); };
+  const fetchData = () => { adminApi.getAchievements().then(setItems).finally(() => setLoading(false)); };
   useEffect(fetchData, []);
 
   const openAdd = () => { setEditing(null); reset(EMPTY); setImageVal(""); setModalOpen(true); };

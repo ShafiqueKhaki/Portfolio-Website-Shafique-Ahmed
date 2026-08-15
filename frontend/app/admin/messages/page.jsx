@@ -22,7 +22,6 @@ function MessagesContent() {
   const [deleting, setDeleting] = useState(false);
 
   const fetchData = () => {
-    setLoading(true);
     const params = {};
     if (filterUnread) params.unread = true;
     if (search) params.search = search;

@@ -28,7 +28,6 @@ function ExperienceContent() {
   const { register, handleSubmit, reset } = useForm({ defaultValues: EMPTY });
 
   const fetchData = () => {
-    setLoading(true);
     adminApi.getExperiences().then(setItems).finally(() => setLoading(false));
   };
   useEffect(fetchData, []);

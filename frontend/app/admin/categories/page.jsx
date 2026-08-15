@@ -25,7 +25,7 @@ function CategoriesContent() {
 
   const { register, handleSubmit, reset } = useForm({ defaultValues: EMPTY });
 
-  const fetchData = () => { setLoading(true); adminApi.getCategories().then(setItems).finally(() => setLoading(false)); };
+  const fetchData = () => { adminApi.getCategories().then(setItems).finally(() => setLoading(false)); };
   useEffect(fetchData, []);
 
   const openAdd = () => { setEditing(null); reset(EMPTY); setModalOpen(true); };

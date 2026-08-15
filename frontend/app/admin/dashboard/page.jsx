@@ -47,7 +47,7 @@ function DashboardContent() {
         <h1 className="font-display text-3xl font-semibold">
           Welcome back, {user?.name?.split(" ")[0] || "Admin"} 👋
         </h1>
-        <p className="text-[var(--text-muted)] mt-1 text-sm">Here's what's happening with your portfolio.</p>
+        <p className="text-[var(--text-muted)] mt-1 text-sm">Here&apos;s what&apos;s happening with your portfolio.</p>
       </div>
 
       {/* Stats */}

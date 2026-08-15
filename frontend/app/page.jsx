@@ -10,8 +10,6 @@ import RevealOnScroll from "@/components/ui/RevealOnScroll";
 import SkillBar from "@/components/ui/SkillBar";
 import { groupBy } from "@/lib/utils";
 
-export const dynamic = 'force-dynamic';
-
 // ─── Typed text hook ─────────────────────────────────────────────
 const ROLES = [
   "Software Engineer",
@@ -39,6 +37,7 @@ function useTyped(words, speed = 80, pause = 2000) {
       if (text.length > 0) {
         timeout = setTimeout(() => setText(text.slice(0, -1)), speed / 2);
       } else {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional chained-effect state machine driving the typewriter animation
         setWordIndex((i) => i + 1);
         setTyping(true);
       }
@@ -290,12 +289,12 @@ export default function HomePage() {
       <section className="px-6 py-24 border-t border-[var(--border)]">
         <RevealOnScroll>
           <div className="max-w-2xl mx-auto text-center">
-            <p className="font-mono text-xs text-[var(--accent)] tracking-widest uppercase mb-6">Let's connect</p>
+            <p className="font-mono text-xs text-[var(--accent)] tracking-widest uppercase mb-6">Let&apos;s connect</p>
             <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
               Have a project in mind?
             </h2>
             <p className="text-[var(--text-muted)] mb-8 leading-relaxed">
-              I'm always open to interesting collaborations, internship opportunities,
+              I&apos;m always open to interesting collaborations, internship opportunities,
               or just a good conversation about tech.
             </p>
             <Link href="/contact"

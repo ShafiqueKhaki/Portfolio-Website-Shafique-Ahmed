@@ -28,7 +28,6 @@ function CertificationsContent() {
   const { register, handleSubmit, reset } = useForm({ defaultValues: EMPTY });
 
   const fetchData = () => {
-    setLoading(true);
     adminApi.getCertifications().then(setItems).finally(() => setLoading(false));
   };
   useEffect(fetchData, []);

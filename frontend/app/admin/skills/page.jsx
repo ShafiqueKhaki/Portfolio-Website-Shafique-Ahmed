@@ -28,7 +28,6 @@ function SkillsContent() {
   const { register, handleSubmit, reset } = useForm({ defaultValues: EMPTY });
 
   const fetchData = () => {
-    setLoading(true);
     adminApi.getSkills().then(setSkills).finally(() => setLoading(false));
   };
   useEffect(fetchData, []);

@@ -19,7 +19,10 @@ export function useAuth() {
     }
   }, []);
 
-  useEffect(() => { fetchUser(); }, [fetchUser]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetchUser is async; every setState happens after its first await, not synchronously in this effect
+    fetchUser();
+  }, [fetchUser]);
 
   const login = useCallback(async (email, password) => {
     const user = await authApi.login({ email, password });

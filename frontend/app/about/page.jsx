@@ -68,13 +68,13 @@ export default function AboutPage() {
 
         <div className="prose prose-neutral dark:prose-invert max-w-none">
           <RevealOnScroll>
-            <h2 className="font-display text-2xl font-semibold mb-4">Hello, I'm Shafique.</h2>
+            <h2 className="font-display text-2xl font-semibold mb-4">Hello, I&apos;m Shafique.</h2>
             <div className="text-[var(--text-muted)] leading-relaxed space-y-4">
               {profile?.bio ? (
                 profile.bio.split("\n").map((p, i) => <p key={i}>{p}</p>)
               ) : (
                 <>
-                  <p>I'm a final-year Computer Science student at Sukkur IBA University, based in Sukkur, Sindh, Pakistan. I'm passionate about building software that solves real problems — clean, maintainable, and fast.</p>
+                  <p>I&apos;m a final-year Computer Science student at Sukkur IBA University, based in Sukkur, Sindh, Pakistan. I&apos;m passionate about building software that solves real problems — clean, maintainable, and fast.</p>
                   <p>I specialize in full-stack web development with Python (FastAPI) on the backend and Next.js on the frontend. I love the entire stack: databases, APIs, UIs, and the infrastructure that holds it all together.</p>
                   <p>Outside of coding, I enjoy reading about system design, contributing to open-source projects, and documenting what I learn through blog posts.</p>
                 </>
@@ -84,7 +84,7 @@ export default function AboutPage() {
 
           <RevealOnScroll delay={100}>
             <div className="mt-8 p-5 bg-[var(--bg-subtle)] rounded-xl border border-[var(--border)]">
-              <h3 className="font-display text-lg font-semibold mb-3">What I'm working on now</h3>
+              <h3 className="font-display text-lg font-semibold mb-3">What I&apos;m working on now</h3>
               <ul className="text-sm text-[var(--text-muted)] space-y-2">
                 <li>🔨 Building this portfolio — learning in public</li>
                 <li>📚 7th semester coursework at Sukkur IBA</li>
