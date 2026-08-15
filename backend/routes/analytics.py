@@ -7,13 +7,15 @@ from database import get_db
 from models.analytics import Visitor
 from schemas.analytics import PageViewCreate
 from auth.dependencies import get_current_admin
+from rate_limit import limiter
 
 public_router = APIRouter(prefix="/api/analytics", tags=["analytics"])
 admin_router = APIRouter(prefix="/api/admin/analytics", tags=["admin-analytics"])
 
 
 @public_router.post("/pageview", status_code=201)
-async def log_pageview(body: PageViewCreate, request: Request, db: Session = Depends(get_db)):
+@limiter.limit("30/minute")
+async def log_pageview(request: Request, body: PageViewCreate, db: Session = Depends(get_db)):
     client_ip = request.client.host if request.client else "unknown"
     ip_hash = hashlib.sha256(client_ip.encode()).hexdigest()
     visitor = Visitor(

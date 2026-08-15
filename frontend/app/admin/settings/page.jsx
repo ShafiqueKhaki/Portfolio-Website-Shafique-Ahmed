@@ -12,7 +12,12 @@ import { useAuth } from "@/lib/auth";
 
 const schema = z.object({
   current_password: z.string().min(1, "Current password is required"),
-  new_password: z.string().min(8, "New password must be at least 8 characters"),
+  new_password: z.string()
+    .min(8, "Must be at least 8 characters")
+    .regex(/[a-z]/, "Must contain a lowercase letter")
+    .regex(/[A-Z]/, "Must contain an uppercase letter")
+    .regex(/\d/, "Must contain a digit")
+    .regex(/[^\w\s]/, "Must contain a symbol"),
   confirm_password: z.string(),
 }).refine(d => d.new_password === d.confirm_password, {
   message: "Passwords do not match",
@@ -21,15 +26,16 @@ const schema = z.object({
 
 function SettingsContent() {
   const [saving, setSaving] = useState(false);
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { register, handleSubmit, reset, formState: { errors } } = useForm({ resolver: zodResolver(schema) });
 
   const onSubmit = async (data) => {
     setSaving(true);
     try {
       await authApi.changePassword({ current_password: data.current_password, new_password: data.new_password });
-      toast.success("Password changed successfully!");
       reset();
+      toast.success("Password changed. Please sign in again.");
+      await logout();
     } catch (err) {
       toast.error(err.message || "Failed to change password");
     } finally {

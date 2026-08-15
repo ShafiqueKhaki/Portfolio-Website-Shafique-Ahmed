@@ -1,4 +1,6 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const MUTATING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+const AUTH_PATHS = new Set(["/api/auth/login", "/api/auth/refresh", "/api/auth/logout"]);
 
 export class ApiError extends Error {
   constructor(message, status, data) {
@@ -9,11 +11,42 @@ export class ApiError extends Error {
   }
 }
 
-async function request(path, options = {}) {
+function getCsrfToken() {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+let refreshInFlight = null;
+
+function refreshSession() {
+  if (!refreshInFlight) {
+    refreshInFlight = request("/api/auth/refresh", { method: "POST" })
+      .finally(() => { refreshInFlight = null; });
+  }
+  return refreshInFlight;
+}
+
+async function request(path, options = {}, _isRetry = false) {
   const url = `${API_URL}${path}`;
+  const method = (options.method || "GET").toUpperCase();
   const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
 
-  const res = await fetch(url, { ...options, headers });
+  if (MUTATING_METHODS.has(method)) {
+    const csrfToken = getCsrfToken();
+    if (csrfToken) headers["X-CSRF-Token"] = csrfToken;
+  }
+
+  const res = await fetch(url, { ...options, headers, credentials: "include" });
+
+  if (res.status === 401 && !_isRetry && !AUTH_PATHS.has(path)) {
+    try {
+      await refreshSession();
+      return request(path, options, true);
+    } catch {
+      // fall through to normal error handling below using the original response
+    }
+  }
 
   if (!res.ok) {
     let data;
@@ -23,22 +56,6 @@ async function request(path, options = {}) {
 
   if (res.status === 204) return null;
   try { return await res.json(); } catch { return null; }
-}
-
-function getToken() {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("access_token");
-}
-
-async function authRequest(path, options = {}) {
-  const token = getToken();
-  return request(path, {
-    ...options,
-    headers: {
-      ...(options.headers || {}),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-  });
 }
 
 // ─── Public API ──────────────────────────────────────────────────
@@ -61,80 +78,82 @@ export const publicApi = {
 // ─── Auth API ────────────────────────────────────────────────────
 export const authApi = {
   login: (body) => request("/api/auth/login", { method: "POST", body: JSON.stringify(body) }),
-  refresh: (refresh_token) => request("/api/auth/refresh", { method: "POST", body: JSON.stringify({ refresh_token }) }),
-  me: () => authRequest("/api/auth/me"),
-  changePassword: (body) => authRequest("/api/auth/change-password", { method: "POST", body: JSON.stringify(body) }),
+  refresh: () => request("/api/auth/refresh", { method: "POST" }),
+  logout: () => request("/api/auth/logout", { method: "POST" }),
+  me: () => request("/api/auth/me"),
+  changePassword: (body) => request("/api/auth/change-password", { method: "POST", body: JSON.stringify(body) }),
 };
 
 // ─── Admin API ───────────────────────────────────────────────────
 export const adminApi = {
   // Profile
-  updateProfile: (body) => authRequest("/api/admin/profile", { method: "PUT", body: JSON.stringify(body) }),
+  updateProfile: (body) => request("/api/admin/profile", { method: "PUT", body: JSON.stringify(body) }),
 
   // Projects
-  getProjects: () => authRequest("/api/admin/projects"),
-  createProject: (body) => authRequest("/api/admin/projects", { method: "POST", body: JSON.stringify(body) }),
-  updateProject: (id, body) => authRequest(`/api/admin/projects/${id}`, { method: "PUT", body: JSON.stringify(body) }),
-  deleteProject: (id) => authRequest(`/api/admin/projects/${id}`, { method: "DELETE" }),
+  getProjects: () => request("/api/admin/projects"),
+  createProject: (body) => request("/api/admin/projects", { method: "POST", body: JSON.stringify(body) }),
+  updateProject: (id, body) => request(`/api/admin/projects/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteProject: (id) => request(`/api/admin/projects/${id}`, { method: "DELETE" }),
 
   // Skills
-  getSkills: () => authRequest("/api/admin/skills"),
-  createSkill: (body) => authRequest("/api/admin/skills", { method: "POST", body: JSON.stringify(body) }),
-  updateSkill: (id, body) => authRequest(`/api/admin/skills/${id}`, { method: "PUT", body: JSON.stringify(body) }),
-  deleteSkill: (id) => authRequest(`/api/admin/skills/${id}`, { method: "DELETE" }),
+  getSkills: () => request("/api/admin/skills"),
+  createSkill: (body) => request("/api/admin/skills", { method: "POST", body: JSON.stringify(body) }),
+  updateSkill: (id, body) => request(`/api/admin/skills/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteSkill: (id) => request(`/api/admin/skills/${id}`, { method: "DELETE" }),
 
   // Experiences
-  getExperiences: () => authRequest("/api/admin/experiences"),
-  createExperience: (body) => authRequest("/api/admin/experiences", { method: "POST", body: JSON.stringify(body) }),
-  updateExperience: (id, body) => authRequest(`/api/admin/experiences/${id}`, { method: "PUT", body: JSON.stringify(body) }),
-  deleteExperience: (id) => authRequest(`/api/admin/experiences/${id}`, { method: "DELETE" }),
+  getExperiences: () => request("/api/admin/experiences"),
+  createExperience: (body) => request("/api/admin/experiences", { method: "POST", body: JSON.stringify(body) }),
+  updateExperience: (id, body) => request(`/api/admin/experiences/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteExperience: (id) => request(`/api/admin/experiences/${id}`, { method: "DELETE" }),
 
   // Education
-  getEducation: () => authRequest("/api/admin/education"),
-  createEducation: (body) => authRequest("/api/admin/education", { method: "POST", body: JSON.stringify(body) }),
-  updateEducation: (id, body) => authRequest(`/api/admin/education/${id}`, { method: "PUT", body: JSON.stringify(body) }),
-  deleteEducation: (id) => authRequest(`/api/admin/education/${id}`, { method: "DELETE" }),
+  getEducation: () => request("/api/admin/education"),
+  createEducation: (body) => request("/api/admin/education", { method: "POST", body: JSON.stringify(body) }),
+  updateEducation: (id, body) => request(`/api/admin/education/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteEducation: (id) => request(`/api/admin/education/${id}`, { method: "DELETE" }),
 
   // Certifications
-  getCertifications: () => authRequest("/api/admin/certifications"),
-  createCertification: (body) => authRequest("/api/admin/certifications", { method: "POST", body: JSON.stringify(body) }),
-  updateCertification: (id, body) => authRequest(`/api/admin/certifications/${id}`, { method: "PUT", body: JSON.stringify(body) }),
-  deleteCertification: (id) => authRequest(`/api/admin/certifications/${id}`, { method: "DELETE" }),
+  getCertifications: () => request("/api/admin/certifications"),
+  createCertification: (body) => request("/api/admin/certifications", { method: "POST", body: JSON.stringify(body) }),
+  updateCertification: (id, body) => request(`/api/admin/certifications/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteCertification: (id) => request(`/api/admin/certifications/${id}`, { method: "DELETE" }),
 
   // Achievements
-  getAchievements: () => authRequest("/api/admin/achievements"),
-  createAchievement: (body) => authRequest("/api/admin/achievements", { method: "POST", body: JSON.stringify(body) }),
-  updateAchievement: (id, body) => authRequest(`/api/admin/achievements/${id}`, { method: "PUT", body: JSON.stringify(body) }),
-  deleteAchievement: (id) => authRequest(`/api/admin/achievements/${id}`, { method: "DELETE" }),
+  getAchievements: () => request("/api/admin/achievements"),
+  createAchievement: (body) => request("/api/admin/achievements", { method: "POST", body: JSON.stringify(body) }),
+  updateAchievement: (id, body) => request(`/api/admin/achievements/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteAchievement: (id) => request(`/api/admin/achievements/${id}`, { method: "DELETE" }),
 
   // Blog
-  getBlogPosts: () => authRequest("/api/admin/blog"),
-  createBlogPost: (body) => authRequest("/api/admin/blog", { method: "POST", body: JSON.stringify(body) }),
-  updateBlogPost: (id, body) => authRequest(`/api/admin/blog/${id}`, { method: "PUT", body: JSON.stringify(body) }),
-  deleteBlogPost: (id) => authRequest(`/api/admin/blog/${id}`, { method: "DELETE" }),
+  getBlogPosts: () => request("/api/admin/blog"),
+  createBlogPost: (body) => request("/api/admin/blog", { method: "POST", body: JSON.stringify(body) }),
+  updateBlogPost: (id, body) => request(`/api/admin/blog/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteBlogPost: (id) => request(`/api/admin/blog/${id}`, { method: "DELETE" }),
 
   // Categories
-  getCategories: () => authRequest("/api/admin/categories"),
-  createCategory: (body) => authRequest("/api/admin/categories", { method: "POST", body: JSON.stringify(body) }),
-  updateCategory: (id, body) => authRequest(`/api/admin/categories/${id}`, { method: "PUT", body: JSON.stringify(body) }),
-  deleteCategory: (id) => authRequest(`/api/admin/categories/${id}`, { method: "DELETE" }),
+  getCategories: () => request("/api/admin/categories"),
+  createCategory: (body) => request("/api/admin/categories", { method: "POST", body: JSON.stringify(body) }),
+  updateCategory: (id, body) => request(`/api/admin/categories/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteCategory: (id) => request(`/api/admin/categories/${id}`, { method: "DELETE" }),
 
   // Messages
-  getMessages: (params = {}) => authRequest(`/api/admin/messages?${new URLSearchParams(params)}`),
-  markRead: (id) => authRequest(`/api/admin/messages/${id}/read`, { method: "PUT" }),
-  deleteMessage: (id) => authRequest(`/api/admin/messages/${id}`, { method: "DELETE" }),
+  getMessages: (params = {}) => request(`/api/admin/messages?${new URLSearchParams(params)}`),
+  markRead: (id) => request(`/api/admin/messages/${id}/read`, { method: "PUT" }),
+  deleteMessage: (id) => request(`/api/admin/messages/${id}`, { method: "DELETE" }),
 
   // Analytics
-  getAnalytics: () => authRequest("/api/admin/analytics"),
+  getAnalytics: () => request("/api/admin/analytics"),
 
   // Upload
   upload: async (file, folder = "portfolio") => {
     const formData = new FormData();
     formData.append("file", file);
-    const token = getToken();
+    const csrfToken = getCsrfToken();
     const res = await fetch(`${API_URL}/api/admin/upload?folder=${folder}`, {
       method: "POST",
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: "include",
+      headers: csrfToken ? { "X-CSRF-Token": csrfToken } : {},
       body: formData,
     });
     if (!res.ok) {

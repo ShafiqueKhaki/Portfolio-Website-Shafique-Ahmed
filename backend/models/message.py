@@ -12,7 +12,7 @@ class Message(Base):
     email: Mapped[str] = mapped_column(String(255))
     subject: Mapped[str] = mapped_column(String(300), default="")
     message: Mapped[str] = mapped_column(Text)
-    is_read: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_read: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc)

@@ -5,6 +5,7 @@ import BlogCard from "@/components/ui/BlogCard";
 import PageHeader from "@/components/ui/PageHeader";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import EmptyState from "@/components/ui/EmptyState";
+import ErrorState from "@/components/ui/ErrorState";
 import { FileText, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +13,7 @@ export default function BlogPage() {
   const [posts, setPosts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState(null);
   const [activeTag, setActiveTag] = useState(null);
@@ -19,6 +21,7 @@ export default function BlogPage() {
   useEffect(() => {
     Promise.all([publicApi.getBlogPosts(), publicApi.getCategories("blog")])
       .then(([p, c]) => { setPosts(p); setCategories(c); })
+      .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, []);
 
@@ -76,7 +79,7 @@ export default function BlogPage() {
         </div>
       )}
 
-      {loading ? <LoadingSpinner /> : filtered.length === 0 ? (
+      {loading ? <LoadingSpinner /> : error ? <ErrorState /> : filtered.length === 0 ? (
         <EmptyState message="No posts found." icon={FileText} />
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">

@@ -26,6 +26,10 @@ class Settings(BaseSettings):
     APP_ENV: str = "development"
 
     @property
+    def is_production(self) -> bool:
+        return self.APP_ENV.lower() == "production"
+
+    @property
     def cors_origins_list(self) -> List[str]:
         return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
 

@@ -24,7 +24,7 @@ class Project(Base):
     is_featured: Mapped[bool] = mapped_column(Boolean, default=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     category_id: Mapped[int | None] = mapped_column(
-        Integer, ForeignKey("categories.id", ondelete="SET NULL"), nullable=True
+        Integer, ForeignKey("categories.id", ondelete="SET NULL"), nullable=True, index=True
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

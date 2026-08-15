@@ -4,6 +4,7 @@ import { publicApi } from "@/lib/api";
 import { formatDateRange } from "@/lib/utils";
 import PageHeader from "@/components/ui/PageHeader";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import ErrorState from "@/components/ui/ErrorState";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
 import { GraduationCap } from "lucide-react";
 
@@ -12,6 +13,7 @@ export default function EducationPage() {
   const [certifications, setCertifications] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -19,6 +21,7 @@ export default function EducationPage() {
       publicApi.getCertifications(),
       publicApi.getAchievements(),
     ]).then(([e, c, a]) => { setEducation(e); setCertifications(c); setAchievements(a); })
+      .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, []);
 
@@ -26,7 +29,7 @@ export default function EducationPage() {
     <div className="max-w-6xl mx-auto px-6">
       <PageHeader title="Education" subtitle="Academic background, certifications, and achievements." accent="Academics" />
 
-      {loading ? <LoadingSpinner /> : (
+      {loading ? <LoadingSpinner /> : error ? <ErrorState /> : (
         <>
           {/* Education timeline */}
           <section className="mb-20">

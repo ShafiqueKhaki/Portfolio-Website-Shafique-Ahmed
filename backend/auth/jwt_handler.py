@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from fastapi import HTTPException, status
@@ -11,11 +12,14 @@ def create_access_token(data: dict) -> str:
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
-def create_refresh_token(data: dict) -> str:
-    payload = data.copy()
+def create_refresh_token(data: dict, jti: str | None = None) -> tuple[str, str, datetime]:
+    """Create a refresh token. Returns (token, jti, expires_at)."""
+    jti = jti or uuid.uuid4().hex
     expire = datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
-    payload.update({"exp": expire, "type": "refresh"})
-    return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    payload = data.copy()
+    payload.update({"exp": expire, "type": "refresh", "jti": jti})
+    token = jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    return token, jti, expire
 
 
 def decode_token(token: str, token_type: str = "access") -> dict:

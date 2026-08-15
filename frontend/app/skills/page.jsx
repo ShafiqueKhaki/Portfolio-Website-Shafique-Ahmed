@@ -5,6 +5,7 @@ import { groupBy } from "@/lib/utils";
 import SkillBar from "@/components/ui/SkillBar";
 import PageHeader from "@/components/ui/PageHeader";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import ErrorState from "@/components/ui/ErrorState";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
 
 const CATEGORY_ORDER = ["Languages", "Frameworks", "Tools", "Concepts"];
@@ -12,10 +13,12 @@ const CATEGORY_ORDER = ["Languages", "Frameworks", "Tools", "Concepts"];
 export default function SkillsPage() {
   const [grouped, setGrouped] = useState({});
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     publicApi.getSkills()
       .then((data) => setGrouped(groupBy(data, "category")))
+      .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, []);
 
@@ -32,7 +35,7 @@ export default function SkillsPage() {
         accent="Toolkit"
       />
 
-      {loading ? <LoadingSpinner /> : (
+      {loading ? <LoadingSpinner /> : error ? <ErrorState /> : (
         <div className="grid md:grid-cols-2 gap-x-16 gap-y-16 mb-24">
           {orderedKeys.map((category, i) => (
             <RevealOnScroll key={category} delay={i * 80}>

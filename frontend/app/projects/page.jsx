@@ -5,6 +5,7 @@ import ProjectCard from "@/components/ui/ProjectCard";
 import PageHeader from "@/components/ui/PageHeader";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import EmptyState from "@/components/ui/EmptyState";
+import ErrorState from "@/components/ui/ErrorState";
 import { Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +13,7 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [activeCategory, setActiveCategory] = useState(null);
   const [activeTech, setActiveTech] = useState("");
   const [sortBy, setSortBy] = useState("newest");
@@ -19,6 +21,7 @@ export default function ProjectsPage() {
   useEffect(() => {
     Promise.all([publicApi.getProjects(), publicApi.getCategories("project")])
       .then(([p, c]) => { setProjects(p); setCategories(c); })
+      .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, []);
 
@@ -76,6 +79,8 @@ export default function ProjectsPage() {
 
       {loading ? (
         <LoadingSpinner />
+      ) : error ? (
+        <ErrorState />
       ) : filtered.length === 0 ? (
         <EmptyState message="No projects match the current filters." icon={Layers} />
       ) : (

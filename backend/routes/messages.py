@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from database import get_db
@@ -6,13 +6,15 @@ from models.message import Message
 from schemas.message import MessageCreate, MessageResponse
 from auth.dependencies import get_current_admin
 from services.email_service import send_contact_notification
+from rate_limit import limiter
 
 public_router = APIRouter(prefix="/api/contact", tags=["contact"])
 admin_router = APIRouter(prefix="/api/admin/messages", tags=["admin-messages"])
 
 
 @public_router.post("", status_code=201)
-def send_message(body: MessageCreate, db: Session = Depends(get_db)):
+@limiter.limit("3/hour")
+def send_message(request: Request, body: MessageCreate, db: Session = Depends(get_db)):
     msg = Message(**body.model_dump())
     db.add(msg)
     db.commit()

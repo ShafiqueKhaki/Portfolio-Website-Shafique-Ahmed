@@ -5,6 +5,7 @@ import { formatDateRange } from "@/lib/utils";
 import PageHeader from "@/components/ui/PageHeader";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import EmptyState from "@/components/ui/EmptyState";
+import ErrorState from "@/components/ui/ErrorState";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
 import { Briefcase } from "lucide-react";
 
@@ -18,16 +19,17 @@ const TYPE_COLORS = {
 export default function ExperiencePage() {
   const [experiences, setExperiences] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    publicApi.getExperiences().then(setExperiences).finally(() => setLoading(false));
+    publicApi.getExperiences().then(setExperiences).catch(() => setError(true)).finally(() => setLoading(false));
   }, []);
 
   return (
     <div className="max-w-6xl mx-auto px-6">
       <PageHeader title="Experience" subtitle="My professional journey so far." accent="Career" />
 
-      {loading ? <LoadingSpinner /> : experiences.length === 0 ? (
+      {loading ? <LoadingSpinner /> : error ? <ErrorState /> : experiences.length === 0 ? (
         <EmptyState message="Experience entries coming soon." icon={Briefcase} />
       ) : (
         <div className="relative mb-24">

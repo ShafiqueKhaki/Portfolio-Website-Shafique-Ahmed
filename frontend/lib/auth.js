@@ -9,29 +9,11 @@ export function useAuth() {
   const router = useRouter();
 
   const fetchUser = useCallback(async () => {
-    const token = localStorage.getItem("access_token");
-    if (!token) { setLoading(false); return; }
     try {
       const me = await authApi.me();
       setUser(me);
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 401) {
-        // Try refresh
-        const refreshToken = localStorage.getItem("refresh_token");
-        if (refreshToken) {
-          try {
-            const tokens = await authApi.refresh(refreshToken);
-            localStorage.setItem("access_token", tokens.access_token);
-            localStorage.setItem("refresh_token", tokens.refresh_token);
-            const me = await authApi.me();
-            setUser(me);
-          } catch {
-            clearTokens();
-          }
-        } else {
-          clearTokens();
-        }
-      }
+    } catch {
+      setUser(null);
     } finally {
       setLoading(false);
     }
@@ -39,40 +21,22 @@ export function useAuth() {
 
   useEffect(() => { fetchUser(); }, [fetchUser]);
 
-  // const login = useCallback(async (email, password) => {
-  //   const tokens = await authApi.login({ email, password });
-  //   localStorage.setItem("access_token", tokens.access_token);
-  //   localStorage.setItem("refresh_token", tokens.refresh_token);
-  //   const me = await authApi.me();
-  //   setUser(me);
-  //   return me;
-  // }, []);
-
   const login = useCallback(async (email, password) => {
-  const tokens = await authApi.login({ email, password });
-  localStorage.setItem("access_token", tokens.access_token);
-  localStorage.setItem("refresh_token", tokens.refresh_token);
-  const me = await authApi.me();
-  setUser(me);
-  router.push("/admin/dashboard");
-  return me;
-}, [router]);
+    const user = await authApi.login({ email, password });
+    setUser(user);
+    router.push("/admin/dashboard");
+    return user;
+  }, [router]);
 
-  const logout = useCallback(() => {
-    clearTokens();
+  const logout = useCallback(async () => {
+    try {
+      await authApi.logout();
+    } catch {
+      // ignore — clear local state and redirect regardless
+    }
     setUser(null);
     router.push("/admin/login");
   }, [router]);
 
   return { user, loading, login, logout, refetch: fetchUser };
-}
-
-function clearTokens() {
-  localStorage.removeItem("access_token");
-  localStorage.removeItem("refresh_token");
-}
-
-export function getToken() {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("access_token");
 }

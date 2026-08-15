@@ -17,10 +17,10 @@ class BlogPost(Base):
         Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
     category_id: Mapped[int | None] = mapped_column(
-        Integer, ForeignKey("categories.id", ondelete="SET NULL"), nullable=True
+        Integer, ForeignKey("categories.id", ondelete="SET NULL"), nullable=True, index=True
     )
     tags: Mapped[list] = mapped_column(JSON, default=list)
-    is_published: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_published: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     published_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )

@@ -10,9 +10,10 @@ from .blog_post import BlogPost
 from .category import Category
 from .message import Message
 from .analytics import Visitor
+from .refresh_token import RefreshToken
 
 __all__ = [
     "User", "Profile", "Project", "Skill", "Experience",
     "Education", "Certification", "Achievement", "BlogPost",
-    "Category", "Message", "Visitor",
+    "Category", "Message", "Visitor", "RefreshToken",
 ]

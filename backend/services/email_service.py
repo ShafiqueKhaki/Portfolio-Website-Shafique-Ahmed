@@ -1,3 +1,4 @@
+import html
 import resend
 from config import settings
 
@@ -9,6 +10,11 @@ def send_contact_notification(name: str, email: str, subject: str, message: str)
 
     resend.api_key = settings.RESEND_API_KEY
 
+    safe_name = html.escape(name)
+    safe_email = html.escape(email)
+    safe_subject = html.escape(subject)
+    safe_message = html.escape(message).replace(chr(10), "<br>")
+
     try:
         resend.Emails.send({
             "from": "Portfolio Contact <onboarding@resend.dev>",
@@ -17,10 +23,10 @@ def send_contact_notification(name: str, email: str, subject: str, message: str)
             "subject": f"[Portfolio Contact] {subject or 'New Message'}",
             "html": f"""
             <h2>New Contact Form Submission</h2>
-            <p><strong>From:</strong> {name} &lt;{email}&gt;</p>
-            <p><strong>Subject:</strong> {subject}</p>
+            <p><strong>From:</strong> {safe_name} &lt;{safe_email}&gt;</p>
+            <p><strong>Subject:</strong> {safe_subject}</p>
             <hr>
-            <p>{message.replace(chr(10), '<br>')}</p>
+            <p>{safe_message}</p>
             """,
         })
         return True
